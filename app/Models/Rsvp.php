@@ -14,4 +14,9 @@ class Rsvp extends Model
         'status_kehadiran',
         'jumlah_kehadiran'
     ];
+
+    public function invitation()
+    {
+        return $this->belongsTo(Invitation::class);
+    }
 }
