@@ -8,11 +8,25 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 // route auth
-
 Route::post('register', [\App\Http\Controllers\AuthController::class, 'register']);
 Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
-Route::get('akun', [\App\Http\Controllers\AuthController::class, 'index'])->middleware('auth:sanctum');
 
+Route::middleware('auth:sanctum')->group(function () {
+
+Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout']);
+
+});
+
+
+// route superadmin
+Route::middleware(['auth:sanctum', 'super_admin'])->group(function () {
+    
+    Route::resource('akun', \App\Http\Controllers\SuperAdminController::class);
+    
+});
+
+
+// route pengantin
 Route::resource('invitations', \App\Http\Controllers\InvitationController::class);
 
 // Route RSVP
