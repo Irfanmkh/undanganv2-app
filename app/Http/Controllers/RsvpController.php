@@ -59,9 +59,9 @@ class RsvpController extends Controller
         ], 200);
     }
 
-    public function update($id)
+    public function update(Request $request, $id)
     {
-        $tamu = request()->validate([
+        $tamu = $request()->validate([
             'invitation_id' => 'required|exists:invitations,id',
             'nama_tamu' => 'sometimes|required',
             'status_kehadiran' => 'sometimes|required',
