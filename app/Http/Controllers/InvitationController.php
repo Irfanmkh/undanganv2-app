@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invitation;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class InvitationController extends Controller
@@ -10,7 +11,7 @@ class InvitationController extends Controller
 
     public function index()
     {
-        $invitations = Invitation::all();
+        $invitations = auth()->user()->invitation;
         return response()->json([
             'message' => 'Invitations retrieved successfully',
             'data' => $invitations
@@ -39,6 +40,8 @@ class InvitationController extends Controller
         ]);
 
 
+        $validasi['user_id'] = auth()->user()->id;
+
         $invitation = Invitation::create($validasi);
 
         return response()->json([
@@ -47,21 +50,23 @@ class InvitationController extends Controller
         ]);
     }
 
-    public function show($slug)
+    public function show($id)
     {
-        $invitation = Invitation::where('slug', $slug)->firstOrFail();
+
+        $invitation = auth()->user()->invitation()->findOrFail($id);
         return response()->json([
             'message' => 'Invitation retrieved successfully',
             'data' => $invitation
         ]);
     }
 
-    public function update(Request $request, $slug)
+    public function update(Request $request, $id)
     {
-        $dataLama = Invitation::where('slug', $slug)->firstOrFail();
+
+        $invitation = auth()->user()->invitation()->findOrFail($id);
 
         $dataBaru = $request->validate([
-            'slug' => 'sometimes|unique:invitations,slug,' . $dataLama->id,
+            'slug' => 'sometimes|unique:invitations,slug,' . $invitation->id,
             'fullname_pria' => 'sometimes|string',
             'nickname_pria' => 'sometimes|string',
             'fullname_wanita' => 'sometimes|string',
@@ -79,10 +84,12 @@ class InvitationController extends Controller
             'link_map_resepsi' => 'sometimes|url'
         ]);
 
+        $invitation->update($dataBaru);
+
 
         return response()->json([
             'message' => 'Invitation updated successfully',
-            'data' => $dataLama->update($dataBaru)
+            'data' => $invitation
         ]);
     }
 

@@ -18,9 +18,9 @@ class RsvpController extends Controller
             'data' => $data_tamu
         ], 200);
     }
-    public function store()
+    public function store(Request $request)
     {
-        $tamu = request()->validate([
+        $tamu = $request->validate([
             'invitation_id' => 'required|exists:invitations,id',
             'nama_tamu' => 'required',
             'status_kehadiran' => 'required',

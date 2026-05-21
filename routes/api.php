@@ -13,21 +13,25 @@ Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
-Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout']);
 
+    // preview undangan
+    Route::resource('data-undangan', \App\Http\Controllers\InvitationController::class);
+
+    // change password & logout
+    Route::post('change-password', [\App\Http\Controllers\AuthController::class, 'updatePassword']);
+    Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout']);
 });
 
 
 // route superadmin
 Route::middleware(['auth:sanctum', 'super_admin'])->group(function () {
-    
+
     Route::resource('akun', \App\Http\Controllers\SuperAdminController::class);
-    
 });
 
 
-// route pengantin
-Route::resource('invitations', \App\Http\Controllers\InvitationController::class);
+// route akses undangan
+
 
 // Route RSVP
 Route::get('rsvp/{slug}', \App\Http\Controllers\RsvpController::class . '@show');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -56,7 +57,8 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public function logout(Request $request){
+    public function logout(Request $request)
+    {
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
@@ -64,4 +66,35 @@ class AuthController extends Controller
         ], 200);
     }
 
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            "current_password" => 'required|string',
+            "new_password" => "required|string|min:8|confirmed"
+
+        ]);
+
+        $user = auth()->user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                "message" => "password tidak sesuai!",
+
+            ], 422);
+        }
+
+        if ($request->current_password === $request->new_password) {
+            return response()->json([
+                "message" => "password baru tidak boleh sama dengan password lama!",
+
+            ], 422);
+        }
+
+        $user->update([
+            "password" => bcrypt($request->new_password)
+        ]);
+        return response()->json([
+            "message" => "password berhasil diubah!"
+        ], 200);
+    }
 }

@@ -9,6 +9,7 @@ class Invitation extends Model
     //
 
     protected $fillable = [
+        'user_id',
         'slug',
         'fullname_pria',
         'nickname_pria',
@@ -26,4 +27,12 @@ class Invitation extends Model
         'link_map_akad',
         'link_map_resepsi'
     ];
+
+
+    // relation
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -36,7 +36,15 @@ class User extends Authenticatable
         return $this->role === 'super_admin';
     }
 
-    public function isPengantin(){
+    public function isPengantin()
+    {
         return $this->role === 'pengantin';
+    }
+
+    // relation
+
+    public function invitation()
+    {
+        return $this->hasMany(Invitation::class);
     }
 }

@@ -9,21 +9,20 @@ class SuperAdminController extends Controller
 {
     //
 
-        public function index()
+    public function index()
     {
-        if (auth()->user()->isSuperAdmin()){
+        if (auth()->user()->isSuperAdmin()) {
             $data_user = User::all();
-        
-        return response()->json([
-            'message' => 'Users retrieved successfully',
-            'data' => $data_user
-        ], 200);
+
+            return response()->json([
+                'message' => 'Users retrieved successfully',
+                'data' => $data_user
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Unauthorized'
             ], 403);
         }
-
     }
 
     public function store(Request $request)
@@ -49,7 +48,8 @@ class SuperAdminController extends Controller
         ], 201);
     }
 
-    public function delete($id){
+    public function delete($id)
+    {
         $user = User::find($id);
         if (!$user) {
             return response()->json([
@@ -64,7 +64,8 @@ class SuperAdminController extends Controller
         ], 200);
     }
 
-    public function update(Request $request, $id){
+    public function update(Request $request, $id)
+    {
         $request->validate([
             'email' => 'email|sometimes|required',
             'name' => 'string|sometimes|required',
