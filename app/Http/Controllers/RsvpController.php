@@ -12,10 +12,13 @@ class RsvpController extends Controller
 
     public function index()
     {
-        $data_tamu = Rsvp::all();
+        $data_rsvp = auth()->user()->invitations->pluck('id');
+
+        $data_rsvp = Rsvp::whereIn("invitation_id", $data_rsvp)->latest()->get();
+
         return response()->json([
-            'message' => 'Data tamu berhasil diambil',
-            'data' => $data_tamu
+            'message' => 'Rsvp retrieved successfully',
+            'data' => $data_rsvp
         ], 200);
     }
     public function store(Request $request)
@@ -24,73 +27,105 @@ class RsvpController extends Controller
             'invitation_id' => 'required|exists:invitations,id',
             'nama_tamu' => 'required',
             'status_kehadiran' => 'required',
-            'jumlah_kehadiran' => 'required'
+            'jumlah_kehadiran' => 'required',
+            'pesan' => 'nullable|string'
         ]);
 
         $dataTamu = Rsvp::create($tamu);
         return response()->json([
-            'message' => 'Data tamu berhasil disimpan',
+            'message' => 'Data berhasil disimpan',
             'data' => $dataTamu
         ], 201);
     }
 
 
-    public function show($slug)
+    public function show($id)
     {
-        $invitaion = Invitation::where('slug', $slug)->firstOrFail();
-        $data_tamu = Rsvp::where('invitation_id', $invitaion->id)->get();
-        return response()->json([
-            'message' => 'Data tamu berhasil diambil',
-            'data' => $data_tamu
-        ], 200);
-    }
+        $rsvp =  auth()->user()->invitations()->pluck('id');
 
-    public function showdetail($id)
-    {
-        $data_tamu = Rsvp::find($id);
-        if (!$data_tamu) {
+        $rsvp = Rsvp::whereIn('invitation_id', $rsvp)->find($id);
+        if(!$rsvp){
             return response()->json([
-                'message' => 'Data tamu tidak ditemukan',
-            ], 404);
+                "message"=>"data tidak ada",
+                "data"=> null
+            ],404);
         }
+
         return response()->json([
-            'message' => 'Data tamu berhasil diambil',
-            'data' => $data_tamu
+            'message' => 'Data Rsvp berhasil diambil',
+            'data' => $rsvp
         ], 200);
     }
 
     public function update(Request $request, $id)
     {
-        $tamu = $request()->validate([
+
+    $rsvp = Rsvp::findOrFail($id);
+
+    if($rsvp->invitation->user_id !== auth()->user()->id){
+        return response()->json([
+            'message' => 'Anda tidak memiliki akses untuk mengupdate data ini',
+        ], 403);
+    } 
+
+        $data_rsvp = $request->validate([
             'invitation_id' => 'required|exists:invitations,id',
             'nama_tamu' => 'sometimes|required',
             'status_kehadiran' => 'sometimes|required',
-            'jumlah_kehadiran' => 'sometimes|required'
+            'jumlah_kehadiran' => 'sometimes|required',
+            'pesan'=>'sometimes|nullable|string'
         ]);
-        $data_tamu = Rsvp::find($id);
-        if (!$data_tamu) {
+        
+        if (!$rsvp) {
             return response()->json([
-                'message' => 'Data tamu tidak ditemukan',
+                'message' => 'Data  tidak ditemukan',
             ], 404);
         }
-        $data_tamu->update($tamu);
+        $rsvp->update($data_rsvp);
         return response()->json([
-            'message' => 'Data tamu berhasil diperbarui',
-            'data' => $data_tamu
+            'message' => 'Data rsvp berhasil diperbarui',
+            'data' => $rsvp->fresh()
         ], 200);
     }
 
     public function destroy($id)
     {
-        $data_tamu = Rsvp::find($id);
-        if (!$data_tamu) {
-            return response()->json([
-                'message' => 'Data tamu tidak ditemukan',
-            ], 404);
-        }
-        $data_tamu->delete();
+
+    $rsvp = Rsvp::findOrFail($id);
+
+    if($rsvp->invitation->user_id !== auth()->user()->id){
         return response()->json([
-            'message' => 'Data tamu berhasil dihapus',
+            'message' => 'Anda tidak memiliki akses untuk mengupdate data ini',
+        ], 403);
+    } 
+        
+        $rsvp->delete();
+        return response()->json([
+            'message' => 'Data rsvp berhasil dihapus',
         ], 200);
+    }
+
+
+    public function showPesan($invitation_id)
+    {
+
+    $pesan = Rsvp::where('invitation_id', $invitation_id)
+    ->whereNotNull('pesan')
+    ->select('nama_tamu', 'pesan', 'created_at')
+    ->latest()
+    ->get();
+
+    return response()->json([
+        'message' => 'message retrieved successfully',
+        'data' => $pesan
+    ],200);
+    }
+
+    public function updatePesan(Request $request, $invitation_id)
+    {
+        $data = request->validate([
+            'nama_tamu' => 'required|sometimes',
+            'pesan' => 'required|string|sometimes'
+        ]);
     }
 }

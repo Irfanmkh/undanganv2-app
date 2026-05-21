@@ -11,7 +11,7 @@ class InvitationController extends Controller
 
     public function index()
     {
-        $invitations = auth()->user()->invitation;
+        $invitations = auth()->user()->invitations;
         return response()->json([
             'message' => 'Invitations retrieved successfully',
             'data' => $invitations
@@ -53,7 +53,7 @@ class InvitationController extends Controller
     public function show($id)
     {
 
-        $invitation = auth()->user()->invitation()->findOrFail($id);
+        $invitation = auth()->user()->invitations()->findOrFail($id);
         return response()->json([
             'message' => 'Invitation retrieved successfully',
             'data' => $invitation
@@ -63,7 +63,7 @@ class InvitationController extends Controller
     public function update(Request $request, $id)
     {
 
-        $invitation = auth()->user()->invitation()->findOrFail($id);
+        $invitation = auth()->user()->invitations()->findOrFail($id);
 
         $dataBaru = $request->validate([
             'slug' => 'sometimes|unique:invitations,slug,' . $invitation->id,

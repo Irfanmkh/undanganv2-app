@@ -43,8 +43,13 @@ class User extends Authenticatable
 
     // relation
 
-    public function invitation()
+    public function invitations()
     {
         return $this->hasMany(Invitation::class);
+    }
+
+    public function rsvps()
+    {
+        return $this->hasMany(Rsvp::class);
     }
 }

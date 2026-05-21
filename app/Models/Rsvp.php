@@ -12,11 +12,16 @@ class Rsvp extends Model
         'invitation_id',
         'nama_tamu',
         'status_kehadiran',
-        'jumlah_kehadiran'
+        'jumlah_kehadiran',
+        'pesan'
     ];
 
     public function invitation()
     {
         return $this->belongsTo(Invitation::class);
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class);
     }
 }
