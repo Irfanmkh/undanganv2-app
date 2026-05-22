@@ -37,6 +37,8 @@ Route::middleware(['auth:sanctum', 'super_admin'])->group(function () {
 Route::get('{slug}/{invitation_id}', [\App\Http\Controllers\PublicInvitationController::class, 'show']);
 
 
-// Route RSVP
+// Route RSVP publik
 Route::post('rsvp', [\App\Http\Controllers\RsvpController::class, 'store']);
+Route::post('rsvp/like/{id}', [\App\Http\Controllers\PublicRsvpController::class, 'like']);
+Route::put('rsvp/{id}', [\App\Http\Controllers\PublicRsvpController::class, 'update']);
 Route::get('rsvp/comments/{invitation_id}', [\App\Http\Controllers\RsvpController::class, 'showPesan']);

@@ -21,7 +21,13 @@ class Rsvp extends Model
         return $this->belongsTo(Invitation::class);
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
+    }
+
+    public function rsvplikes()
+    {
+        return $this->hasMany(Rsvplike::class);
     }
 }
