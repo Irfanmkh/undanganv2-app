@@ -50,12 +50,16 @@ public function updateReply(Request $request, $reply_id)
     $invitation = auth()->user()->invitations()->findOrFail($reply->rsvp->invitation_id);
 
     // 3. VALIDASI INPUT
-    $data = $request->validate([
+    $update_data = $request->validate([
         "pesan_reply" => "required|string|sometimes"
     ]);
 
+    $update_data["rsvp_id"] = $reply->rsvp_id; 
+    $update_data["user_id"] = $reply->user_id; 
+    $update_data["nama_pembalas"] = $invitation->slug; 
+
     // 4. UPDATE
-    $reply->update($data);
+    $reply->update($update_data);
 
     return response()->json([
         "message" => "Reply berhasil diupdate",
@@ -80,7 +84,7 @@ public function destroyReply($reply_id)
     ], 200);
 }
 
-public function showReplies($rsvp_id)
+public function showReply($rsvp_id)
 {
     // 1. CARI KOMENTAR INDUKNYA DULU
     $rsvpInduk = Rsvp::findOrFail($rsvp_id);
@@ -90,7 +94,7 @@ public function showReplies($rsvp_id)
     $invitation = auth()->user()->invitations()->findOrFail($rsvpInduk->invitation_id);
 
     // 3. AMBIL REPLYNYA
-    $replies = $rsvpInduk->rsvpreplies()->with('user')->get();
+    $replies = $rsvpInduk->rsvpreplies()->with('rsvp')->get();
 
     return response()->json([
         "message" => "Daftar reply untuk komentar dengan ID $rsvp_id",
