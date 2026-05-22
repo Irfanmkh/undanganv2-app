@@ -34,6 +34,8 @@ class PublicRsvpController extends Controller
         ], 200);
     }
 
+    
+
     public function like(Request $request, $id)
     {
         $guestToken = $request->header("guestToken");
@@ -56,14 +58,14 @@ class PublicRsvpController extends Controller
             Rsvp::where("id", $id)->increment("like_count");
             return response()->json([
                 "meesage" => "Liked",
-                "data" => $rsvp->like_count
+                "data" => $rsvp->fresh()->like_count
             ], 200);
         } else {
             $like->delete();
             Rsvp::where("id", $id)->decrement("like_count");
             return response()->json([
                 "message" => "Unliked",
-                "data" => $rsvp->like_count
+                "data" => $rsvp->fresh()->like_count
 
             ], 200);
         }

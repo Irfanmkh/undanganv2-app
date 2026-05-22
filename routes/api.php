@@ -18,7 +18,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('data-undangan/rsvp', \App\Http\Controllers\RsvpController::class)->only(['index', 'destroy', 'show', 'update']);
     Route::resource('data-undangan', \App\Http\Controllers\InvitationController::class);
 
-    // RSVP
+    // reply komen
+    Route::post('rsvp/comments/reply/{rsvp_id}', [\App\Http\Controllers\RsvpRepliesController::class, 'storeReply']);
+    Route::put('rsvp/comments/reply/{reply_id}', [\App\Http\Controllers\RsvpRepliesController::class, 'updateReply']);
+    Route::delete('rsvp/comments/reply/{reply_id}', [\App\Http\Controllers\RsvpRepliesController::class, 'destroyReply']);
+    Route::get('rsvp/comments/reply/{rsvp_id}', [\App\Http\Controllers\RsvpRepliesController::class, 'showReply']);
 
     // change password & logout
     Route::post('change-password', [\App\Http\Controllers\AuthController::class, 'updatePassword']);
@@ -42,3 +46,4 @@ Route::post('rsvp', [\App\Http\Controllers\RsvpController::class, 'store']);
 Route::post('rsvp/like/{id}', [\App\Http\Controllers\PublicRsvpController::class, 'like']);
 Route::put('rsvp/{id}', [\App\Http\Controllers\PublicRsvpController::class, 'update']);
 Route::get('rsvp/comments/{invitation_id}', [\App\Http\Controllers\RsvpController::class, 'showPesan']);
+

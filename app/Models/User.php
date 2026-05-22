@@ -52,4 +52,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Rsvp::class);
     }
+
+    public function rsvpreplies()
+    {
+        return $this->hasMany(Rsvpreply::class);
+    }
 }

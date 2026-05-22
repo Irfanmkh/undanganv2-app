@@ -13,7 +13,8 @@ class Rsvp extends Model
         'nama_tamu',
         'status_kehadiran',
         'jumlah_kehadiran',
-        'pesan'
+        'pesan',
+        "guest_token"
     ];
 
     public function invitation()
@@ -29,5 +30,10 @@ class Rsvp extends Model
     public function rsvplikes()
     {
         return $this->hasMany(Rsvplike::class);
+    }
+
+    public function rsvpreplies()
+    {
+        return $this->hasMany(Rsvpreply::class);
     }
 }

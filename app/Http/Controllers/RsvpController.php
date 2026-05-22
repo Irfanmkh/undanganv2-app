@@ -23,13 +23,24 @@ class RsvpController extends Controller
     }
     public function store(Request $request)
     {
+
+    // dd("KODINGAN YANG BENAR TERPANGGIL!");
+        $token = $request->header("guestToken")?? $request->header("guesttoken");
+
+        if ($token === null){
+            return response()->json([
+                "message" => "Guest token is required",
+                "data" => null
+            ], 400);
+        }
         $tamu = $request->validate([
             'invitation_id' => 'required|exists:invitations,id',
             'nama_tamu' => 'required',
             'status_kehadiran' => 'required',
             'jumlah_kehadiran' => 'required',
-            'pesan' => 'nullable|string'
+            'pesan' => 'nullable|string',
         ]);
+        $tamu['guest_token'] = $token;
 
         $dataTamu = Rsvp::create($tamu);
         return response()->json([
