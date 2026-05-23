@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Rsvp;
 use App\Models\Rsvplike;
+use App\Models\Rsvpreply;
+use App\Models\Rsvpreplylike;
 use Illuminate\Http\Request;
 
 class PublicRsvpController extends Controller
@@ -34,7 +36,7 @@ class PublicRsvpController extends Controller
         ], 200);
     }
 
-    
+
 
     public function like(Request $request, $id)
     {
@@ -57,7 +59,7 @@ class PublicRsvpController extends Controller
         if ($like->wasRecentlyCreated) {
             Rsvp::where("id", $id)->increment("like_count");
             return response()->json([
-                "meesage" => "Liked",
+                "message" => "Liked",
                 "data" => $rsvp->fresh()->like_count
             ], 200);
         } else {
@@ -67,6 +69,40 @@ class PublicRsvpController extends Controller
                 "message" => "Unliked",
                 "data" => $rsvp->fresh()->like_count
 
+            ], 200);
+        }
+    }
+
+    public function likeReply(Request $request, $id)
+    {
+        $guestToken = $request->header("guestToken");
+
+        $reply = Rsvpreply::findOrFail($id);
+
+        if ($guestToken === null) {
+            return response()->json([
+                "message" => "Guest token is required",
+                "data" => null
+            ], 400);
+        }
+
+        $like = Rsvpreplylike::firstOrCreate([
+            "rsvpreply_id" => $id,
+            "guest_token" => $guestToken
+        ]);
+
+        if ($like->wasRecentlyCreated) {
+            Rsvpreply::where("id", $id)->increment("like_count");
+            return response()->json([
+                "message" => "Liked",
+                "data" => $reply->fresh()->like_count
+            ], 200);
+        } else {
+            $like->delete();
+            Rsvpreply::where("id", $id)->decrement("like_count");
+            return response()->json([
+                "message" => "Unliked",
+                "data" => $reply->fresh()->like_count
             ], 200);
         }
     }

@@ -17,13 +17,18 @@ class Rsvpreply extends Model
         'like_count'
     ];
 
-    public function user(){
-        return $this->belongsTo(User::class);   
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
-    public function rsvp(){
+    public function rsvp()
+    {
         return $this->belongsTo(Rsvp::class);
     }
 
-
+    public function rsvpreplylikes()
+    {
+        return $this->hasMany(Rsvpreplylike::class);
+    }
 }

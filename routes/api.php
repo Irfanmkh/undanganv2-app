@@ -44,6 +44,6 @@ Route::get('{slug}/{invitation_id}', [\App\Http\Controllers\PublicInvitationCont
 // Route RSVP publik
 Route::post('rsvp', [\App\Http\Controllers\RsvpController::class, 'store']);
 Route::post('rsvp/like/{id}', [\App\Http\Controllers\PublicRsvpController::class, 'like']);
+Route::post('rsvp/like/reply/{id}', [\App\Http\Controllers\PublicRsvpController::class, 'likeReply']);
 Route::put('rsvp/{id}', [\App\Http\Controllers\PublicRsvpController::class, 'update']);
 Route::get('rsvp/comments/{invitation_id}', [\App\Http\Controllers\RsvpController::class, 'showPesan']);
-
