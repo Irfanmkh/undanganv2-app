@@ -48,6 +48,23 @@ Route::get(
     }
 );
 
+Route::post('/undangan/rsvp', function (Request $request) {
+    
+    // 1. Validasi dulu data yang masuk dari Vue
+    $request->validate([
+        'nama_tamu'         => 'required|string|max:255',
+        'status_kehadiran'  => 'required|in:Hadir,Tidak Hadir',
+        'jumlah_rombongan'  => 'required|integer|min:1',
+        'catatan_ucapan'    => 'required|string',
+    ]);
+
+    // 2. Kodingan Simpan ke Database
+    // Sementara kita return back dulu untuk ngetes apakah Inertia mendeteksi sukses
+    // Nanti di sini kita hubungkan ke Model/Controller RSVP asli punyamu kemarin
+    
+    return redirect()->back()->with('success', 'RSVP Berhasil dikirim!');
+});
+
 
 
 

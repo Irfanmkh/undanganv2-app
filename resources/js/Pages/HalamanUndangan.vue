@@ -55,6 +55,8 @@
 <script setup>
 import { reactive } from 'vue'
 
+import { route } from '@inertiajs/vue3'
+
 // Tangkap Props dari Laravel
 defineProps({
   slug: String,
@@ -73,6 +75,18 @@ const form = reactive({
 // Fungsi Kirim Form
 const kirimRsvp = () => {
   // Alert sementara untuk ngetes data v-model
-  alert(`✅ MENGIRIM DATA!\n---------------------\nNama: ${form.nama_tamu}\nStatus: ${form.status_kehadiran}\nUcapan: ${form.catatan_ucapan}`);
+  router.post('undangan/rsvp', form, {
+    onSuccess: () =>{
+      alert("terima kasih, ucapan anda berhasil dikirim");
+
+      form.nama_tamu = '';
+      form.catatan_ucapan='';
+      form.jumlah_rombongan=1;
+    },
+    onError: (errors) => {
+      console.error('ada eror validasi, errors');
+    }
+
+  })
 }
 </script>
