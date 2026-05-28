@@ -1,21 +1,25 @@
 <script setup>
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import GuestLayout from "@/Layouts/GuestLayout.vue";
+import InputError from "@/Components/InputError.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import TextInput from "@/Components/TextInput.vue";
+import { Head, Link, useForm } from "@inertiajs/vue3";
+import { ref } from "vue";
+
+const tunjukkanPassword = ref(false);
 
 const form = useForm({
-    name: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
+    name: "",
+    email: "",
+    whatsapp: "",
+    password: "",
+    password_confirmation: "",
 });
 
 const submit = () => {
-    form.post(route('register'), {
-        onFinish: () => form.reset('password', 'password_confirmation'),
+    form.post(route("register"), {
+        onFinish: () => form.reset("password", "password_confirmation"),
     });
 };
 </script>
@@ -55,18 +59,45 @@ const submit = () => {
 
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
+            <div class="mt-4">
+                <InputLabel for="whatsapp" value="No Whatsapp" />
+
+                <TextInput
+                    id="whatsapp"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.whatsapp"
+                    required
+                    placeholder="Contoh: 08123456789"
+                    @input="form.whatsapp = form.whatsapp.replace(/\D/g, '')"
+                />
+
+                <InputError class="mt-2" :message="form.errors.whatsapp" />
+            </div>
 
             <div class="mt-4">
                 <InputLabel for="password" value="Password" />
 
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="new-password"
-                />
+                <div class="relative mt-1">
+                    <TextInput
+                        id="password"
+                        class="block w-full pr-12"
+                        :type="tunjukkanPassword ? 'text' : 'password'"
+                        v-model="form.password"
+                        required
+                        autocomplete="new-password"
+                    />
+
+                    <button
+                        type="button"
+                        @click="tunjukkanPassword = !tunjukkanPassword"
+                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-sm text-gray-500 hover:text-gray-700 focus:outline-none"
+                    >
+                        <span>{{
+                            tunjukkanPassword ? "🙈 Sembunyikan" : "👁️ Lihat"
+                        }}</span>
+                    </button>
+                </div>
 
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
@@ -77,14 +108,26 @@ const submit = () => {
                     value="Confirm Password"
                 />
 
-                <TextInput
-                    id="password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password_confirmation"
-                    required
-                    autocomplete="new-password"
-                />
+                <div class="relative mt-1">
+                    <TextInput
+                        id="password_confirmation"
+                        :type="tunjukkanPassword ? 'text' : 'password'"
+                        class="mt-1 block w-full"
+                        v-model="form.password_confirmation"
+                        required
+                        autocomplete="new-password"
+                    />
+
+                    <button
+                        type="button"
+                        @click="tunjukkanPassword = !tunjukkanPassword"
+                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-sm text-gray-500 hover:text-gray-700 focus:outline-none"
+                    >
+                        <span>{{
+                            tunjukkanPassword ? "🙈 Sembunyikan" : "👁️ Lihat"
+                        }}</span>
+                    </button>
+                </div>
 
                 <InputError
                     class="mt-2"

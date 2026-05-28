@@ -15,6 +15,7 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required'
+
         ]);
 
         if (!auth()->attempt($request->only('email', 'password'))) {
@@ -40,12 +41,14 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users',
             'name' => 'required|string|unique:users',
             'password' => 'required|string|min:8',
+            'whatsapp' => 'string|nullable|max:20|numeric',
         ]);
 
         $user = User::create([
             'email' => $request->email,
             'name' => $request->name,
             'password' => bcrypt($request->password),
+            'whatsapp' => $request->whatsapp,
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
