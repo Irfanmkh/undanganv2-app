@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('ibu_wanita')->nullable();
 
             // tema
-            $table->string('tema')->nullable()->default('normal');
+            $table->foreignId('tema_id')->constrained()->onDelete('restrict');
 
             // acara
             $table->dateTime('waktu_resepsi')->nullable();

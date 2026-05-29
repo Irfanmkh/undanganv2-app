@@ -1,56 +1,9 @@
-<script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue';
-
-const props = defineProps({
-    align: {
-        type: String,
-        default: 'right',
-    },
-    width: {
-        type: String,
-        default: '48',
-    },
-    contentClasses: {
-        type: String,
-        default: 'py-1 bg-white',
-    },
-});
-
-const closeOnEscape = (e) => {
-    if (open.value && e.key === 'Escape') {
-        open.value = false;
-    }
-};
-
-onMounted(() => document.addEventListener('keydown', closeOnEscape));
-onUnmounted(() => document.removeEventListener('keydown', closeOnEscape));
-
-const widthClass = computed(() => {
-    return {
-        48: 'w-48',
-    }[props.width.toString()];
-});
-
-const alignmentClasses = computed(() => {
-    if (props.align === 'left') {
-        return 'ltr:origin-top-left rtl:origin-top-right start-0';
-    } else if (props.align === 'right') {
-        return 'ltr:origin-top-right rtl:origin-top-left end-0';
-    } else {
-        return 'origin-top';
-    }
-});
-
-const open = ref(false);
-</script>
-
 <template>
     <div class="relative">
         <div @click="open = !open">
             <slot name="trigger" />
         </div>
 
-        <!-- Full Screen Dropdown Overlay -->
         <div
             v-show="open"
             class="fixed inset-0 z-40"
@@ -58,27 +11,68 @@ const open = ref(false);
         ></div>
 
         <Transition
-            enter-active-class="transition ease-out duration-200"
-            enter-from-class="opacity-0 scale-95"
-            enter-to-class="opacity-100 scale-100"
-            leave-active-class="transition ease-in duration-75"
-            leave-from-class="opacity-100 scale-100"
-            leave-to-class="opacity-0 scale-95"
+            enter-active-class="transition duration-200 ease-out"
+            enter-from-class="transform scale-95 opacity-0 -translate-y-2"
+            enter-to-class="transform scale-100 opacity-100 translate-y-0"
+            leave-active-class="transition duration-150 ease-in"
+            leave-from-class="transform scale-100 opacity-100 translate-y-0"
+            leave-to-class="transform scale-95 opacity-0 -translate-y-2"
         >
             <div
                 v-show="open"
-                class="absolute z-50 mt-2 rounded-md shadow-lg"
+                class="absolute z-50 mt-2 rounded-2xl border border-slate-100 shadow-xl backdrop-blur-md bg-white/90 p-1.5 min-w-[12rem]"
                 :class="[widthClass, alignmentClasses]"
-                style="display: none"
                 @click="open = false"
             >
-                <div
-                    class="rounded-md ring-1 ring-black ring-opacity-5"
-                    :class="contentClasses"
-                >
+                <div class="rounded-xl overflow-hidden">
                     <slot name="content" />
                 </div>
             </div>
         </Transition>
     </div>
 </template>
+
+<script setup>
+import { computed, onMounted, onUnmounted, ref } from "vue";
+
+const props = defineProps({
+    align: {
+        type: String,
+        default: "right",
+    },
+    width: {
+        type: String,
+        default: "48",
+    },
+});
+
+const open = ref(false);
+
+const closeOnEscape = (e) => {
+    if (open.value && e.key === "Escape") {
+        open.value = false;
+    }
+};
+
+onMounted(() => document.addEventListener("keydown", closeOnEscape));
+onUnmounted(() => document.removeEventListener("keydown", closeOnEscape));
+
+const widthClass = computed(() => {
+    return {
+        48: "w-48",
+    }[props.width].toString();
+});
+
+const alignmentClasses = computed(() => {
+    if (props.align === "left") {
+        return "ltr:origin-top-left rtl:origin-top-right start-0";
+    } else if (props.align === "right") {
+        return "ltr:origin-top-right rtl:origin-top-left end-0";
+    } else if (props.align === "top") {
+        // 🟢 Pastikan baris ini ada agar popup dipaksa meloncat ke atas sidebar!
+        return "origin-bottom bottom-full mb-2 start-0";
+    } else {
+        return "origin-top";
+    }
+});
+</script>

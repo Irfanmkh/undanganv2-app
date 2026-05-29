@@ -35,4 +35,8 @@ class Invitation extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function tema(){
+        return $this->belongsTo(Tema::class);
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invitation;
+use App\Models\Tema;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -12,16 +13,24 @@ class InvitationController extends Controller
     public function index()
     {
         $invitations = auth()->user()->invitations;
-        return response()->json([
-            'message' => 'Invitations retrieved successfully',
-            'data' => $invitations
+        // return response()->json([
+        //     'message' => 'Invitations retrieved successfully',
+        //     'data' => $invitations
+        // ]);
+
+        $tema = Tema::all();
+        return \Inertia\Inertia::render('Invitations/Create',
+        [
+            'daftar_tema' => $tema
         ]);
     }
+
+
 
     public function store(Request $request)
     {
         $validasi = $request->validate([
-            'slug' => 'required|unique:invitations,slug',
+            'slug' => 'required|unique:invitations,slug|regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
             'fullname_pria' => 'required|string',
             'nickname_pria' => 'required|string',
             'fullname_wanita' => 'required|string',
@@ -31,8 +40,8 @@ class InvitationController extends Controller
             'ayah_wanita' => 'required|string',
             'ibu_wanita' => 'required|string',
             'tema' => 'required|string',
-            'waktu_resepsi' => 'required|date_format:Y-m-d H:i:s',
-            'waktu_akad' => 'required|date_format:Y-m-d H:i:s',
+            'waktu_resepsi' => 'required|date',
+            'waktu_akad' => 'required|date',
             'lokasi_akad' => 'required|string',
             'lokasi_resepsi' => 'required|string',
             'link_map_akad' => 'required|url',
@@ -44,10 +53,12 @@ class InvitationController extends Controller
 
         $invitation = Invitation::create($validasi);
 
-        return response()->json([
-            'message' => 'Invitation created successfully',
-            'data' => $invitation
-        ]);
+        // return response()->json([
+        //     'message' => 'Invitation created successfully',
+        //     'data' => $invitation
+        // ]);
+
+        return redirect()->back();
     }
 
     public function show($id)
@@ -76,8 +87,8 @@ class InvitationController extends Controller
             'ayah_wanita' => 'sometimes|string',
             'ibu_wanita' => 'sometimes|string',
             'tema' => 'sometimes|string',
-            'waktu_resepsi' => 'sometimes|date_format:Y-m-d H:i:s',
-            'waktu_akad' => 'sometimes|date_format:Y-m-d H:i:s',
+            'waktu_resepsi' => 'sometimes|date',
+            'waktu_akad' => 'sometimes|date',
             'lokasi_akad' => 'sometimes|string',
             'lokasi_resepsi' => 'sometimes|string',
             'link_map_akad' => 'sometimes|url',

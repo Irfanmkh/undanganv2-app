@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +20,9 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+
+    Route::post('/invitations/create', [InvitationController::class, 'store'])->name('invitation.store');
+    Route::get('/invitations', [InvitationController::class, 'index'])->name('invitation.index');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -49,7 +53,7 @@ Route::get(
 );
 
 Route::post('/undangan/rsvp', function (Request $request) {
-    
+
     // 1. Validasi dulu data yang masuk dari Vue
     $request->validate([
         'nama_tamu'         => 'required|string|max:255',
@@ -61,7 +65,7 @@ Route::post('/undangan/rsvp', function (Request $request) {
     // 2. Kodingan Simpan ke Database
     // Sementara kita return back dulu untuk ngetes apakah Inertia mendeteksi sukses
     // Nanti di sini kita hubungkan ke Model/Controller RSVP asli punyamu kemarin
-    
+
     return redirect()->back()->with('success', 'RSVP Berhasil dikirim!');
 });
 

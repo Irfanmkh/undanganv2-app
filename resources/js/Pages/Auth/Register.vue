@@ -5,9 +5,6 @@ import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 import { Head, Link, useForm } from "@inertiajs/vue3";
-import { ref } from "vue";
-
-const tunjukkanPassword = ref(false);
 
 const form = useForm({
     name: "",
@@ -25,132 +22,184 @@ const submit = () => {
 </script>
 
 <template>
-    <GuestLayout>
-        <Head title="Register" />
+    <Head title="Daftar Akun Baru" />
 
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="name" value="Name" />
+    <div class="flex min-h-screen bg-slate-50 text-slate-800 font-sans">
+        <!-- ================= KOLOM KIRI: BRANDING VISUAL CONTRAST ================= -->
+        <div
+            class="hidden lg:flex lg:w-1/2 bg-slate-900 relative overflow-hidden items-center justify-center p-12"
+        >
+            <div
+                class="absolute top-[-20%] left-[-20%] w-[70%] h-[70%] bg-cyan-500/20 rounded-full blur-[120px]"
+            ></div>
+            <div
+                class="absolute bottom-[-20%] right-[-20%] w-[70%] h-[70%] bg-emerald-500/20 rounded-full blur-[120px]"
+            ></div>
 
-                <TextInput
-                    id="name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.name"
-                    required
-                    autofocus
-                    autocomplete="name"
-                />
-
-                <InputError class="mt-2" :message="form.errors.name" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-            <div class="mt-4">
-                <InputLabel for="whatsapp" value="No Whatsapp" />
-
-                <TextInput
-                    id="whatsapp"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.whatsapp"
-                    required
-                    placeholder="Contoh: 08123456789"
-                    @input="form.whatsapp = form.whatsapp.replace(/\D/g, '')"
-                />
-
-                <InputError class="mt-2" :message="form.errors.whatsapp" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <div class="relative mt-1">
-                    <TextInput
-                        id="password"
-                        class="block w-full pr-12"
-                        :type="tunjukkanPassword ? 'text' : 'password'"
-                        v-model="form.password"
-                        required
-                        autocomplete="new-password"
-                    />
-
-                    <button
-                        type="button"
-                        @click="tunjukkanPassword = !tunjukkanPassword"
-                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-sm text-gray-500 hover:text-gray-700 focus:outline-none"
+            <div class="relative z-10 max-w-md text-center lg:text-left">
+                <span
+                    class="px-3 py-1 bg-cyan-500/10 text-cyan-400 text-xs font-bold uppercase tracking-widest rounded-full border border-cyan-500/20"
+                >
+                    Join Loventa Platform
+                </span>
+                <h1
+                    class="text-4xl lg:text-5xl font-extrabold text-white tracking-tight mt-6 leading-tight"
+                >
+                    Mulai Langkah
+                    <span
+                        class="bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent"
+                        >SaaS Bisnismu.</span
                     >
-                        <span>{{
-                            tunjukkanPassword ? "🙈 Sembunyikan" : "👁️ Lihat"
-                        }}</span>
-                    </button>
+                </h1>
+                <p class="text-slate-400 mt-4 text-base leading-relaxed">
+                    Daftar sekarang dan nikmati kemudahan membuat undangan
+                    digital premium dengan performa server secepat kilat.
+                </p>
+            </div>
+        </div>
+
+        <!-- ================= KOLOM KANAN: FORM REGISTER GLASSMORPHISM ================= -->
+        <div
+            class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 bg-slate-50 overflow-y-auto"
+        >
+            <div
+                class="w-full max-w-md bg-white/70 backdrop-blur-md border border-slate-200/60 p-8 sm:p-10 rounded-2xl shadow-xl my-8"
+            >
+                <div class="mb-6">
+                    <h2
+                        class="text-2xl font-bold text-slate-800 tracking-tight"
+                    >
+                        Buat Akun Loventa
+                    </h2>
+                    <p class="text-sm text-slate-500 mt-1">
+                        Isi data di bawah dengan benar untuk memulai
+                        perjalananmu.
+                    </p>
                 </div>
 
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
+                <form @submit.prevent="submit" class="space-y-4">
+                    <!-- Input Nama Lengkap -->
+                    <div>
+                        <InputLabel for="name" value="Nama Lengkap" />
+                        <TextInput
+                            id="name"
+                            type="text"
+                            class="mt-1 block w-full"
+                            v-model="form.name"
+                            required
+                            autofocus
+                            autocomplete="name"
+                            placeholder="Masukkan nama lengkap Anda..."
+                        />
+                        <InputError class="mt-2" :message="form.errors.name" />
+                    </div>
 
-            <div class="mt-4">
-                <InputLabel
-                    for="password_confirmation"
-                    value="Confirm Password"
-                />
+                    <!-- Input Email -->
+                    <div>
+                        <InputLabel for="email" value="Alamat Email" />
+                        <TextInput
+                            id="email"
+                            type="email"
+                            class="mt-1 block w-full"
+                            v-model="form.email"
+                            required
+                            autocomplete="username"
+                            placeholder="nama@email.com"
+                        />
+                        <InputError class="mt-2" :message="form.errors.email" />
+                    </div>
 
-                <div class="relative mt-1">
-                    <TextInput
-                        id="password_confirmation"
-                        :type="tunjukkanPassword ? 'text' : 'password'"
-                        class="mt-1 block w-full"
-                        v-model="form.password_confirmation"
-                        required
-                        autocomplete="new-password"
-                    />
+                    <!-- Input WhatsApp -->
+                    <div>
+                        <InputLabel
+                            for="whatsapp"
+                            value="Nomor WhatsApp (Aktif)"
+                        />
+                        <div class="relative group">
+                            <span
+                                class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate-400 select-none group-focus-within:text-emerald-500 transition-colors"
+                            >
+                                +62
+                            </span>
+                            <TextInput
+                                id="whatsapp"
+                                type="number"
+                                class="mt-1 block w-full !pl-12"
+                                v-model="form.whatsapp"
+                                required
+                                placeholder="8xxxxxxxxxx"
+                            />
+                        </div>
+                        <InputError
+                            class="mt-2"
+                            :message="form.errors.whatsapp"
+                        />
+                    </div>
 
-                    <button
-                        type="button"
-                        @click="tunjukkanPassword = !tunjukkanPassword"
-                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-sm text-gray-500 hover:text-gray-700 focus:outline-none"
+                    <!-- Input Password -->
+                    <div>
+                        <InputLabel for="password" value="Password Baru" />
+                        <TextInput
+                            id="password"
+                            type="password"
+                            class="mt-1 block w-full"
+                            v-model="form.password"
+                            required
+                            autocomplete="new-password"
+                            placeholder="Minimal 8 karakter"
+                        />
+                        <InputError
+                            class="mt-2"
+                            :message="form.errors.password"
+                        />
+                    </div>
+
+                    <!-- Input Konfirmasi Password -->
+                    <div>
+                        <InputLabel
+                            for="password_confirmation"
+                            value="Konfirmasi Password"
+                        />
+                        <TextInput
+                            id="password_confirmation"
+                            type="password"
+                            class="mt-1 block w-full"
+                            v-model="form.password_confirmation"
+                            required
+                            autocomplete="new-password"
+                            placeholder="Ulangi password baru..."
+                        />
+                        <InputError
+                            class="mt-2"
+                            :message="form.errors.password_confirmation"
+                        />
+                    </div>
+
+                    <!-- Button Submit -->
+                    <div class="pt-3">
+                        <PrimaryButton
+                            class="w-full py-3.5 shadow-lg shadow-emerald-500/20"
+                            :class="{ 'opacity-25': form.processing }"
+                            :disabled="form.processing"
+                        >
+                            Daftar Akun Baru
+                        </PrimaryButton>
+                    </div>
+
+                    <!-- Link Login -->
+                    <p
+                        class="text-center text-sm text-slate-500 mt-6 pt-4 border-t border-slate-100"
                     >
-                        <span>{{
-                            tunjukkanPassword ? "🙈 Sembunyikan" : "👁️ Lihat"
-                        }}</span>
-                    </button>
-                </div>
-
-                <InputError
-                    class="mt-2"
-                    :message="form.errors.password_confirmation"
-                />
+                        Sudah punya akun sebelumnya?
+                        <Link
+                            :href="route('login')"
+                            class="font-bold text-emerald-600 hover:text-emerald-500 transition-colors ml-1"
+                        >
+                            Masuk di Sini
+                        </Link>
+                    </p>
+                </form>
             </div>
-
-            <div class="mt-4 flex items-center justify-end">
-                <Link
-                    :href="route('login')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                    Already registered?
-                </Link>
-
-                <PrimaryButton
-                    class="ms-4"
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Register
-                </PrimaryButton>
-            </div>
-        </form>
-    </GuestLayout>
+        </div>
+    </div>
 </template>
