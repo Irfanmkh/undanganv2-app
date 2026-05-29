@@ -6,8 +6,29 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 import { Head, useForm } from "@inertiajs/vue3";
-// 🔴 1. PENTING: Import 'watch' dari vue agar kita bisa pakai fungsi pengawas
 import { ref, watch } from "vue";
+
+const isCopied = ref(false);
+
+const copyLink = async () => {
+    // Gabungkan domain utama dengan isi slug form saat ini
+    const fullLink = `https://loventa.id/${form.slug}`;
+
+    try {
+        // Proses menyalin teks ke clipboard system laptop/HP
+        await navigator.clipboard.writeText(fullLink);
+
+        // Ubah status menjadi true agar ikon berubah jadi centang
+        isCopied.value = true;
+
+        // Kembalikan ke ikon semula setelah 2 detik
+        setTimeout(() => {
+            isCopied.value = false;
+        }, 2000);
+    } catch (err) {
+        console.error("Gagal menyalin link: ", err);
+    }
+};
 
 const activeTab = ref(1);
 
@@ -85,14 +106,7 @@ watch(
 const showNotification = ref(false);
 
 const submit = () => {
-    form.post(route("invitation.store"), {
-        onSuccess: () => {
-            showNotification.value = true;
-            setTimeout(() => {
-                showNotification.value = false;
-            }, 4000);
-        },
-    });
+    form.post(route("invitation.store"));
 };
 </script>
 <template>
@@ -182,35 +196,95 @@ const submit = () => {
                 </div>
 
                 <div class="relative flex items-center group">
-                    <!-- Teks Domain loventa.id/ di dalam inputan -->
                     <span
                         class="absolute left-4 text-sm font-semibold text-slate-400 select-none"
                     >
                         loventa.id/
                     </span>
 
-                    <!-- Input Slug yang di-Disabled -->
-                    <!-- Kita tambahkan kelas bg-slate-100/70 dan cursor-not-allowed agar terlihat terkunci -->
                     <TextInput
                         id="slug"
                         type="text"
-                        class="mt-1 block w-full !pl-24 bg-slate-100/70 cursor-not-allowed text-slate-400 select-none font-medium"
+                        class="mt-1 block w-full !pl-24 !pr-12 font-medium transition-all duration-300"
                         :class="
-                            !isPremium
-                                ? 'bg-slate-100/70 cursor-not-allowed text-slate-400 select-none font-medium'
-                                : 'bg-white text-slate-800'
+                            form.errors.slug
+                                ? 'border-red-500 ring-1 ring-red-500/20 focus:border-red-500 focus:ring-red-500/20 bg-red-50/30'
+                                : !isPremium
+                                  ? 'bg-slate-100/70 cursor-not-allowed text-slate-400 select-none'
+                                  : 'bg-white text-slate-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30'
                         "
                         v-model="form.slug"
                         :disabled="!isPremium"
                         placeholder="otomatis-terisi-dari-nama"
                         @input="filterManualSlug"
                     />
+
+                    <button
+                        v-if="form.slug"
+                        type="button"
+                        @click="copyLink"
+                        title="Salin Link Undangan"
+                        class="absolute right-3 py-1.5 px-2.5 rounded-xl flex items-center space-x-1.5 transition-all duration-300"
+                        :class="
+                            isCopied
+                                ? 'bg-emerald-500/10 text-emerald-600'
+                                : 'text-slate-400 hover:text-emerald-500 hover:bg-emerald-50'
+                        "
+                    >
+                        <span
+                            v-if="isCopied"
+                            class="text-[10px] font-bold uppercase tracking-wider animate-fade-in"
+                        >
+                            Copy Success!
+                        </span>
+
+                        <svg
+                            v-if="isCopied"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="2.5"
+                            stroke="currentColor"
+                            class="w-3.5 h-3.5 animate-fade-in"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M4.5 12.75l6 6 9-13.5"
+                            />
+                        </svg>
+
+                        <svg
+                            v-else
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="2"
+                            stroke="currentColor"
+                            class="w-4 h-4"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376A8.965 8.965 0 0012 12.75a8.965 8.965 0 00-3.75 3.375m7.5 0V1.125c0-.621-.504-1.125-1.125-1.125h-9.75A1.125 1.125 0 003 1.125v16.5c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 00-1.5-.125z"
+                            />
+                        </svg>
+                    </button>
                 </div>
+                <InputError :message="form.errors.slug" class="mt-2" />
                 <p class="text-[11px] text-slate-400 mt-1.5">
-                    *URL di atas dibuat otomatis berdasarkan nama panggilan.
-                    Upgrade ke <b>Paket Premium</b> untuk mengubah link sesuai
-                    keinginan Anda.
+                    <span v-if="!isPremium">
+                        *URL di atas dibuat otomatis berdasarkan nama panggilan.
+                        Upgrade ke <b>Paket Premium</b> untuk mengubah link
+                        sesuai keinginan Anda.
+                    </span>
+
+                    <span v-else class="text-emerald-600 font-semibold">
+                        ✓ Anda bebas mengubah kombinasi teks slug URL di atas
+                        secara mandiri!
+                    </span>
                 </p>
+
                 <div
                     class="mt-3 pt-3 border-t border-dashed border-slate-200 flex items-center justify-between"
                 >
@@ -439,7 +513,7 @@ const submit = () => {
                                     <InputLabel value="Tanggal & Jam akad" />
                                     <TextInput
                                         type="datetime-local"
-                                        v-model="form.akad_date"
+                                        v-model="form.waktu_akad"
                                         required
                                     />
                                 </div>

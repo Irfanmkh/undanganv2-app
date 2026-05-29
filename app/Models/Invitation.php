@@ -19,7 +19,7 @@ class Invitation extends Model
         'ibu_pria',
         'ayah_wanita',
         'ibu_wanita',
-        'tema',
+        'tema_id',
         'waktu_resepsi',
         'waktu_akad',
         'lokasi_akad',

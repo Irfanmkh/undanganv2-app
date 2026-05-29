@@ -39,17 +39,17 @@ class InvitationController extends Controller
             'ibu_pria' => 'required|string',
             'ayah_wanita' => 'required|string',
             'ibu_wanita' => 'required|string',
-            'tema' => 'required|string',
             'waktu_resepsi' => 'required|date',
             'waktu_akad' => 'required|date',
             'lokasi_akad' => 'required|string',
             'lokasi_resepsi' => 'required|string',
             'link_map_akad' => 'required|url',
-            'link_map_resepsi' => 'required|url'
+            'link_map_resepsi' => 'required|url',
+            'tema_id'=>'required|exists:temas,id'
         ]);
 
 
-        $validasi['user_id'] = auth()->user()->id;
+        $validasi['user_id'] = auth()->user()->id;  
 
         $invitation = Invitation::create($validasi);
 
@@ -58,7 +58,7 @@ class InvitationController extends Controller
         //     'data' => $invitation
         // ]);
 
-        return redirect()->back();
+        return redirect()->route('dashboard')->with('sukses_simpan', 'Undangan Sukses Disimpan! 🎉');
     }
 
     public function show($id)

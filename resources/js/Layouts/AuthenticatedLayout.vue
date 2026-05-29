@@ -85,10 +85,13 @@ const showingNavigationDropdown = ref(false);
                                         >
                                             {{ $page.props.auth.user.name }}
                                         </p>
-                                        <span
-                                            class="text-[10px] text-slate-400"
-                                            >{{
-                                                $page.props.auth.user.role
+                                        <span class="text-[10px] text-slate-400"
+                                            >{{ $page.props.auth.user.role }}
+                                            {{
+                                                $page.props.auth.user.paket
+                                                    ? $page.props.auth.user
+                                                          .paket.nama_paket
+                                                    : "Tanpa Paket"
                                             }}</span
                                         >
                                     </div>

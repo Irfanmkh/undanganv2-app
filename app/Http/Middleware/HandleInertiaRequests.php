@@ -32,8 +32,12 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $request->user()? $request->user()->load('paket') : null,
             ],
+            'flash' => [
+            'sukses_simpan' => $request->session()->get('sukses_simpan'),
+            'error_simpan'  => $request->session()->get('error_simpan'), // cadangan klo butuh error
+        ],
         ];
     }
 }

@@ -57,4 +57,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Rsvpreply::class);
     }
+
+    public function paket(){
+        return $this->belongsTo(Paket::class);
+    }
 }
