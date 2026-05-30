@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref } from "vue"; // 🟢 KUNCI UTAMA: Pastikan 'ref' ini ter-import resmi dari vue!
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
@@ -7,13 +7,62 @@ import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import { Link } from "@inertiajs/vue3";
 
+// 🟢 Nyalakan status kontrol buka-tutup sidebar
+const isSidebarOpen = ref(false);
+
 const showingNavigationDropdown = ref(false);
 </script>
 
 <template>
-    <div class="flex min-h-screen bg-slate-50 text-slate-800 font-sans">
+    <div
+        class="min-h-screen bg-slate-50 transition-all duration-300 text-slate-800 relative"
+    >
+        <div class="fixed top-3.5 left-4 z-50 md:hidden">
+            <button
+                type="button"
+                @click="isSidebarOpen = !isSidebarOpen"
+                class="p-2 rounded-xl bg-white/90 backdrop-blur-md text-slate-600 shadow-sm border border-slate-200/80 focus:outline-none active:scale-95 transition-all"
+            >
+                <svg
+                    v-if="!isSidebarOpen"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="2.5"
+                    stroke="currentColor"
+                    class="w-5 h-5"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                    />
+                </svg>
+                <svg
+                    v-else
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="2.5"
+                    stroke="currentColor"
+                    class="w-5 h-5"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                    />
+                </svg>
+            </button>
+        </div>
+
         <aside
-            class="w-64 bg-white/80 backdrop-blur-md border-r border-slate-200/60 fixed h-full z-30 flex flex-col justify-between transition-all duration-300"
+            class="w-64 bg-white/90 backdrop-blur-md border-r border-slate-200/60 fixed h-full z-40 flex flex-col justify-between transition-transform duration-300 -translate-x-full md:translate-x-0"
+            :class="
+                isSidebarOpen
+                    ? 'translate-x-0 shadow-2xl shadow-slate-900/10'
+                    : '-translate-x-full'
+            "
         >
             <div>
                 <div
@@ -33,7 +82,10 @@ const showingNavigationDropdown = ref(false);
                     </Link>
                 </div>
 
-                <nav class="mt-6 px-4 space-y-2 flex-1">
+                <nav
+                    class="mt-6 px-4 space-y-2 flex-1"
+                    @click="isSidebarOpen = false"
+                >
                     <div
                         class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 mb-2"
                     >
@@ -85,15 +137,17 @@ const showingNavigationDropdown = ref(false);
                                         >
                                             {{ $page.props.auth.user.name }}
                                         </p>
-                                        <span class="text-[10px] text-slate-400"
-                                            >{{ $page.props.auth.user.role }}
+                                        <span
+                                            class="text-[10px] text-slate-400"
+                                        >
+                                            {{ $page.props.auth.user.role }}
                                             {{
                                                 $page.props.auth.user.paket
                                                     ? $page.props.auth.user
                                                           .paket.nama_paket
                                                     : "Tanpa Paket"
-                                            }}</span
-                                        >
+                                            }}
+                                        </span>
                                     </div>
                                 </div>
                                 <span class="text-xs text-slate-400">▲</span>
@@ -118,17 +172,25 @@ const showingNavigationDropdown = ref(false);
             </div>
         </aside>
 
-        <div class="flex-1 ml-64 min-h-screen flex flex-col">
+        <div
+            v-if="isSidebarOpen"
+            @click="isSidebarOpen = false"
+            class="fixed inset-0 z-30 bg-slate-900/20 backdrop-blur-sm md:hidden transition-opacity"
+        ></div>
+
+        <div
+            class="flex-1 ml-0 md:ml-64 min-h-screen flex flex-col transition-all duration-300"
+        >
             <header
                 v-if="$slots.header"
-                class="bg-white/60 backdrop-blur-md border-b border-slate-200/40 h-16 flex items-center px-8 sticky top-0 z-20"
+                class="bg-white/60 backdrop-blur-md border-b border-slate-200/40 min-h-16 flex items-center py-6 pt-20 px-4 md:py-0 md:pt-0 md:h-16 md:px-8 sticky top-0 z-20 transition-all duration-300 w-full"
             >
                 <div class="w-full">
                     <slot name="header" />
                 </div>
             </header>
 
-            <main class="flex-1 p-8">
+            <main class="w-full overflow-hidden">
                 <slot />
             </main>
         </div>

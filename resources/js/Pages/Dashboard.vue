@@ -108,16 +108,19 @@ watch(
             </div>
         </transition>
         <template #header>
+            <!-- 🟢 REVISI HEADER: Menata ulang grid text dan button agar responsive di mobile -->
             <div
-                class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+                class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-center sm:text-left"
             >
-                <div>
+                <!-- Bagian Kiri: Teks Sambutan -->
+                <div class="space-y-1">
                     <h2 class="font-bold text-xl text-slate-800 leading-tight">
                         👋 Selamat Datang, {{ $page.props.auth.user.name }}!
                     </h2>
 
+                    <!-- Bagian Badge Paket: Dibuat flex justify-center agar pas di HP tengah, di laptop kiri -->
                     <div
-                        class="flex flex-wrap items-center gap-2 text-xs text-slate-400"
+                        class="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-xs text-slate-400"
                     >
                         <span
                             >Pantau dan kelola seluruh undangan digital Anda di
@@ -159,78 +162,87 @@ watch(
                         </div>
                     </div>
                 </div>
-                <PrimaryButton
+
+                <!-- Bagian Kanan: Tombol Buat Undangan Baru -->
+                <!-- 🔴 FIX UTAMA: Mengganti tag <button> menjadi <Link> milik Inertia agar :href berfungsi,
+             serta menambah w-full sm:w-auto agar di HP otomatis penuh & gampang diklik -->
+                <Link
                     :href="route('invitation.index')"
-                    class="w-fit inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md shadow-emerald-500/10 hover:opacity-90 transition-all duration-300"
+                    class="w-full sm:w-auto inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md shadow-emerald-500/10 hover:opacity-90 transition-all duration-300 hover:scale-[1.01]"
                 >
                     ➕ Buat Undangan Baru
-                </PrimaryButton>
+                </Link>
             </div>
         </template>
-
         <div class="py-7">
             <!-- 🟢 BANNER UPGRADE PREMIUM (Hanya muncul jika v-if="!isPremium" alias akun FREE) -->
-            <div
-                v-if="!isPremium"
-                class="mb-8 mx-auto max-w-7xl sm:px-6 lg:px-8 animate-fade-in"
-            >
+            <div class="py-6 px-4 sm:px-6 lg:px-8 overflow-hidden w-full">
                 <div
-                    class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-6 shadow-xl border border-slate-800"
+                    v-if="!isPremium"
+                    class="mb-6 mx-auto max-w-7xl animate-fade-in w-full"
                 >
-                    <!-- Dekorasi Background Glow Abstrak -->
                     <div
-                        class="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-emerald-500/10 blur-3xl"
-                    ></div>
-                    <div
-                        class="absolute -left-10 -bottom-10 h-32 w-32 rounded-full bg-teal-500/10 blur-3xl"
-                    ></div>
-
-                    <div
-                        class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0 relative z-10"
+                        class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-5 sm:p-6 shadow-xl border border-slate-800 w-full"
                     >
-                        <!-- Sisi Kiri: Teks Rayuan -->
-                        <div class="space-y-1">
-                            <div class="flex items-center space-x-2">
-                                <span
-                                    class="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse"
-                                ></span>
-                                <span
-                                    class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20"
-                                >
-                                    Rekomendasi Upgrade
-                                </span>
-                            </div>
-                            <h3
-                                class="text-base font-bold text-white tracking-tight"
-                            >
-                                Buka Fitur Sakti Loventa Premium! ⚡
-                            </h3>
-                            <p
-                                class="text-xs text-slate-400 max-w-xl leading-relaxed"
-                            >
-                                Akun Free memiliki batas kuota maksimal 2
-                                undangan dan URL acak. Upgrade sekarang untuk
-                                menikmati
-                                <span class="text-slate-200 font-semibold"
-                                    >Bebas Kustomisasi URL Slug</span
-                                >,
-                                <span class="text-slate-200 font-semibold"
-                                    >Tanpa Batas Kuota Undangan</span
-                                >, serta ratusan pilihan tema premium eksklusif!
-                            </p>
-                        </div>
+                        <div
+                            class="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-emerald-500/10 blur-3xl"
+                        ></div>
+                        <div
+                            class="absolute -left-10 -bottom-10 h-32 w-32 rounded-full bg-teal-500/10 blur-3xl"
+                        ></div>
 
-                        <!-- Sisi Kanan: Tombol Aksi Upgrade -->
-                        <div class="flex items-center space-x-3 shrink-0">
-                            <PrimaryButton
-                                type="button"
-                                class="px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-emerald-500/20 transition-all duration-300 hover:scale-[1.02]"
+                        <div
+                            class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 relative z-10 text-center sm:text-left w-full"
+                        >
+                            <div class="space-y-2 w-full">
+                                <div
+                                    class="flex items-center justify-center sm:justify-start space-x-2"
+                                >
+                                    <span
+                                        class="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse"
+                                    ></span>
+                                    <span
+                                        class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20"
+                                    >
+                                        Rekomendasi Upgrade
+                                    </span>
+                                </div>
+                                <h3
+                                    class="text-sm sm:text-base font-bold text-white tracking-tight"
+                                >
+                                    Buka Fitur Sakti Loventa Premium! ⚡
+                                </h3>
+                                <p
+                                    class="text-[11px] sm:text-xs text-slate-400 max-w-xl leading-relaxed mx-auto sm:mx-0"
+                                >
+                                    Akun Free memiliki batas kuota maksimal 2
+                                    undangan dan URL acak. Upgrade sekarang
+                                    untuk menikmati
+                                    <span class="text-slate-200 font-semibold"
+                                        >Bebas Kustomisasi URL Slug</span
+                                    >,
+                                    <span class="text-slate-200 font-semibold"
+                                        >Tanpa Batas Kuota Undangan</span
+                                    >, serta ratusan pilihan tema premium
+                                    eksklusif!
+                                </p>
+                            </div>
+
+                            <div
+                                class="w-full sm:w-auto shrink-0 flex justify-center"
                             >
-                                Upgrade Sekarang 💎
-                            </PrimaryButton>
+                                <Link
+                                    href="#"
+                                    class="w-full sm:w-auto block text-center px-5 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-emerald-500/20 transition-all duration-300 active:scale-95"
+                                >
+                                    Upgrade Sekarang 💎
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="mx-auto max-w-7xl space-y-6 w-full"></div>
             </div>
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
                 <!-- 🟢 KONDISI 1: JIKA UNDANGAN MASIH KOSONG (EMPTY STATE) -->
@@ -309,9 +321,12 @@ watch(
                         </div>
 
                         <div
-                            class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between gap-2"
+                            class="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-2"
                         >
-                            <div class="flex items-center space-x-1.5">
+                            <!-- Kelompok Tombol Kiri (Mata, Edit, Hapus) -->
+                            <div
+                                class="flex items-center space-x-1.5 w-full sm:w-auto justify-start"
+                            >
                                 <a
                                     :href="`/undangan/${invite.slug}`"
                                     target="_blank"
@@ -320,6 +335,7 @@ watch(
                                 >
                                     👁️
                                 </a>
+
                                 <Link
                                     :href="
                                         route('invitation.edit', invite.slug)
@@ -328,6 +344,7 @@ watch(
                                 >
                                     📝 Edit
                                 </Link>
+
                                 <button
                                     type="button"
                                     @click="deleteInvitation(invite)"
@@ -351,15 +368,16 @@ watch(
                                 </button>
                             </div>
 
-                            <PrimaryButton
+                            <!-- Tombol Kanan (Copy) - Di HP otomatis melebar penuh biar gampang dipencet jempol -->
+                            <button
                                 type="button"
                                 @click="
                                     copyDashboardLink(invite.id, invite.slug)
                                 "
-                                class="px-3 py-2 text-xs font-bold rounded-xl transition-all duration-300 flex items-center space-x-1"
+                                class="px-3 py-2 text-xs font-bold rounded-xl transition-all duration-300 flex items-center justify-center space-x-1 w-full sm:w-auto"
                                 :class="
                                     isCopied === invite.id
-                                        ? 'bg-emerald-500/10 text-emerald-600'
+                                        ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20'
                                         : 'bg-slate-800 text-white hover:bg-slate-700'
                                 "
                             >
@@ -368,7 +386,7 @@ watch(
                                         ? "✓ Copied"
                                         : "🔗 Copy"
                                 }}</span>
-                            </PrimaryButton>
+                            </button>
                         </div>
                     </div>
                 </div>
