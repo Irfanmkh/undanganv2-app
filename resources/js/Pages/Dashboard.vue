@@ -3,6 +3,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link } from "@inertiajs/vue3";
 import { ref, onMounted, watch } from "vue";
 import { usePage } from "@inertiajs/vue3";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
 
 // Tangkap data undangan dari Controller
 defineProps({
@@ -158,16 +159,79 @@ watch(
                         </div>
                     </div>
                 </div>
-                <Link
+                <PrimaryButton
                     :href="route('invitation.index')"
                     class="w-fit inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md shadow-emerald-500/10 hover:opacity-90 transition-all duration-300"
                 >
                     ➕ Buat Undangan Baru
-                </Link>
+                </PrimaryButton>
             </div>
         </template>
 
-        <div class="py-12">
+        <div class="py-7">
+            <!-- 🟢 BANNER UPGRADE PREMIUM (Hanya muncul jika v-if="!isPremium" alias akun FREE) -->
+            <div
+                v-if="!isPremium"
+                class="mb-8 mx-auto max-w-7xl sm:px-6 lg:px-8 animate-fade-in"
+            >
+                <div
+                    class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-6 shadow-xl border border-slate-800"
+                >
+                    <!-- Dekorasi Background Glow Abstrak -->
+                    <div
+                        class="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-emerald-500/10 blur-3xl"
+                    ></div>
+                    <div
+                        class="absolute -left-10 -bottom-10 h-32 w-32 rounded-full bg-teal-500/10 blur-3xl"
+                    ></div>
+
+                    <div
+                        class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0 relative z-10"
+                    >
+                        <!-- Sisi Kiri: Teks Rayuan -->
+                        <div class="space-y-1">
+                            <div class="flex items-center space-x-2">
+                                <span
+                                    class="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse"
+                                ></span>
+                                <span
+                                    class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20"
+                                >
+                                    Rekomendasi Upgrade
+                                </span>
+                            </div>
+                            <h3
+                                class="text-base font-bold text-white tracking-tight"
+                            >
+                                Buka Fitur Sakti Loventa Premium! ⚡
+                            </h3>
+                            <p
+                                class="text-xs text-slate-400 max-w-xl leading-relaxed"
+                            >
+                                Akun Free memiliki batas kuota maksimal 2
+                                undangan dan URL acak. Upgrade sekarang untuk
+                                menikmati
+                                <span class="text-slate-200 font-semibold"
+                                    >Bebas Kustomisasi URL Slug</span
+                                >,
+                                <span class="text-slate-200 font-semibold"
+                                    >Tanpa Batas Kuota Undangan</span
+                                >, serta ratusan pilihan tema premium eksklusif!
+                            </p>
+                        </div>
+
+                        <!-- Sisi Kanan: Tombol Aksi Upgrade -->
+                        <div class="flex items-center space-x-3 shrink-0">
+                            <PrimaryButton
+                                type="button"
+                                class="px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-emerald-500/20 transition-all duration-300 hover:scale-[1.02]"
+                            >
+                                Upgrade Sekarang 💎
+                            </PrimaryButton>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
                 <!-- 🟢 KONDISI 1: JIKA UNDANGAN MASIH KOSONG (EMPTY STATE) -->
                 <div
@@ -206,12 +270,12 @@ watch(
                         <div>
                             <div class="flex items-center justify-between mb-3">
                                 <span
-                                    class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded-md border border-emerald-200/50"
+                                    class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded-md border border-emerald-200/50 uppercase"
                                 >
-                                    🎨
+                                    🎨Tema =
                                     {{
-                                        invite.theme
-                                            ? invite.theme.nama_tema
+                                        invite.tema
+                                            ? invite.tema.nama_tema
                                             : "Tema Pilihan"
                                     }}
                                 </span>
@@ -257,14 +321,37 @@ watch(
                                     👁️
                                 </a>
                                 <Link
-                                    :href="route('invitation.index')"
+                                    :href="
+                                        route('invitation.edit', invite.slug)
+                                    "
                                     class="px-3 py-2 bg-slate-50 text-slate-600 hover:text-slate-900 font-bold text-xs rounded-xl transition-colors border border-slate-200/40"
                                 >
                                     📝 Edit
                                 </Link>
+                                <button
+                                    type="button"
+                                    @click="deleteInvitation(invite)"
+                                    class="p-2 bg-red-50 text-red-500 hover:text-red-700 hover:bg-red-100 rounded-xl transition-colors border border-red-200/30"
+                                    title="Hapus Undangan"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="2"
+                                        stroke="currentColor"
+                                        class="w-4 h-4"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                                        />
+                                    </svg>
+                                </button>
                             </div>
 
-                            <button
+                            <PrimaryButton
                                 type="button"
                                 @click="
                                     copyDashboardLink(invite.id, invite.slug)
@@ -281,7 +368,7 @@ watch(
                                         ? "✓ Copied"
                                         : "🔗 Copy"
                                 }}</span>
-                            </button>
+                            </PrimaryButton>
                         </div>
                     </div>
                 </div>

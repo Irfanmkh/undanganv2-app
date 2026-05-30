@@ -20,8 +20,13 @@ Route::get('/dashboard',  [DashboardController::class, 'index'])->middleware(['a
 
 Route::middleware('auth')->group(function () {
 
+// invitations
     Route::post('/invitations/create', [InvitationController::class, 'store'])->name('invitation.store');
     Route::get('/invitations', [InvitationController::class, 'index'])->name('invitation.index');
+    Route::get('/invitations/edit/{slug}', [InvitationController::class, 'edit'])->name('invitation.edit');
+    Route::patch('/invitations/{id}', [InvitationController::class, 'update'])->name('invitation.update');
+
+    // profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

@@ -42,6 +42,7 @@ class AuthController extends Controller
             'name' => 'required|string|unique:users',
             'password' => 'required|string|min:8',
             'whatsapp' => 'string|nullable|max:20|numeric',
+            'paket_id' => 'required',
         ]);
 
         $user = User::create([
@@ -49,6 +50,7 @@ class AuthController extends Controller
             'name' => $request->name,
             'password' => bcrypt($request->password),
             'whatsapp' => $request->whatsapp,
+            'paket_id' => $request->paket_id,
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;

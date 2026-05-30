@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invitation;
+use App\Models\Paket;
 use App\Models\Tema;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -29,6 +30,18 @@ class InvitationController extends Controller
 
     public function store(Request $request)
     {
+        $user = auth()->user()->load('paket');
+        $jumlahUndangan = Invitation::where("user_id", $user->id)->count();
+        $paketUser = $user->paket ? strtolower($user->paket->nama_paket) : 'free';;
+
+        if($paketUser === "free" && $jumlahUndangan >=2){
+            return redirect()->back()->withErrors([
+                'limit_undangan' => 'Akun Paket Free hanya diperbolehkan membuat maksimal 2 undangan. Yuk, upgrade ke Premium untuk menikmati fitur tanpa batas! '
+            ]);
+        }
+
+
+
         $validasi = $request->validate([
             'slug' => 'required|unique:invitations,slug|regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
             'fullname_pria' => 'required|string',
@@ -49,14 +62,10 @@ class InvitationController extends Controller
         ]);
 
 
-        $validasi['user_id'] = auth()->user()->id;  
+        $validasi['user_id'] = auth()->user()->id;
 
         $invitation = Invitation::create($validasi);
 
-        // return response()->json([
-        //     'message' => 'Invitation created successfully',
-        //     'data' => $invitation
-        // ]);
 
         return redirect()->route('dashboard')->with('sukses_simpan', 'Undangan Sukses Disimpan! 🎉');
     }
@@ -70,6 +79,18 @@ class InvitationController extends Controller
             'data' => $invitation
         ]);
     }
+    public function edit($slug)
+    {
+
+        $invitation = auth()->user()->invitations()->where('slug', $slug)->firstOrFail();
+
+        $tema = Tema::all();
+
+        return \Inertia\Inertia::render('Invitations/Edit', [
+            'invitation' => $invitation,
+            'daftar_tema' => $tema
+        ]);
+    }
 
     public function update(Request $request, $id)
     {
@@ -77,7 +98,7 @@ class InvitationController extends Controller
         $invitation = auth()->user()->invitations()->findOrFail($id);
 
         $dataBaru = $request->validate([
-            'slug' => 'sometimes|unique:invitations,slug,' . $invitation->id,
+            'slug' => 'required|regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/i|unique:invitations,slug,' . $invitation->id,
             'fullname_pria' => 'sometimes|string',
             'nickname_pria' => 'sometimes|string',
             'fullname_wanita' => 'sometimes|string',
@@ -98,10 +119,12 @@ class InvitationController extends Controller
         $invitation->update($dataBaru);
 
 
-        return response()->json([
-            'message' => 'Invitation updated successfully',
-            'data' => $invitation
-        ]);
+        // return response()->json([
+        //     'message' => 'Invitation updated successfully',
+        //     'data' => $invitation
+        // ]);
+
+        return redirect()->route('dashboard')->with('sukses_simpan', 'Undangan Sukses Diperbarui! 🎉');
     }
 
     public function destroy($id)

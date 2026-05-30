@@ -5,7 +5,7 @@ import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
-import { Head, useForm } from "@inertiajs/vue3";
+import { Head, useForm, usePage } from "@inertiajs/vue3";
 import { ref, watch } from "vue";
 
 const isCopied = ref(false);
@@ -31,8 +31,11 @@ const copyLink = async () => {
 };
 
 const activeTab = ref(1);
-
-const isPremium = ref(false);
+const page = usePage();
+const namaPaketUser = page.props.auth.user.paket
+    ? page.props.auth.user.paket.nama_paket.toLowerCase()
+    : "free";
+const isPremium = ref(namaPaketUser === "premium");
 
 const filterManualSlug = (event) => {
     // Jika bukan premium, biarkan watcher otomatis yang bekerja
@@ -49,34 +52,30 @@ const filterManualSlug = (event) => {
         .replace(/-+/g, "-"); // minus dobel jadi 1 minus
 };
 
-defineProps({
+// 1. Tangkap props 'invitation' yang dikirim dari Controller
+const props = defineProps({
+    invitation: Object,
     daftar_tema: Array,
 });
 
-// Objek form lengkap sesuai request-mu
+// 2. Masukkan data props tersebut langsung sebagai nilai bawaan (default value) form
 const form = useForm({
-    // data tab 1 (tema)
-    tema_id: "",
-
-    // data tab 2 (mempelai & slug)
-    slug: "",
-    fullname_pria: "",
-    nickname_pria: "",
-    fullname_wanita: "",
-    nickname_wanita: "",
-    ayah_pria: "",
-    ibu_pria: "",
-    ayah_wanita: "",
-    ibu_wanita: "",
-
-    // data tab 3 (waktu)
-
-    waktu_akad: "",
-    waktu_resepsi: "",
-    lokasi_akad: "",
-    lokasi_resepsi: "",
-    link_map_akad: "",
-    link_map_resepsi: "",
+    slug: props.invitation.slug,
+    fullname_pria: props.invitation.fullname_pria,
+    nickname_pria: props.invitation.nickname_pria,
+    fullname_wanita: props.invitation.fullname_wanita,
+    nickname_wanita: props.invitation.nickname_wanita,
+    ayah_pria: props.invitation.ayah_pria,
+    ibu_pria: props.invitation.ibu_pria,
+    ayah_wanita: props.invitation.ayah_wanita,
+    ibu_wanita: props.invitation.ibu_wanita,
+    tema_id: props.invitation.tema_id,
+    waktu_resepsi: props.invitation.waktu_resepsi,
+    waktu_akad: props.invitation.waktu_akad,
+    lokasi_akad: props.invitation.lokasi_akad,
+    lokasi_resepsi: props.invitation.lokasi_resepsi,
+    link_map_akad: props.invitation.link_map_akad,
+    link_map_resepsi: props.invitation.link_map_resepsi,
 });
 
 watch(
@@ -103,19 +102,24 @@ watch(
         }
     },
 );
-const showNotification = ref(false);
 
-const submit = () => {
-    form.post(route("invitation.store"));
+// 3. Fungsi saat tombol simpan perubahan diklik
+const submitUpdate = () => {
+    form.patch(route("invitation.update", props.invitation.id), {
+        onSuccess: () => {},
+    });
 };
 </script>
 <template>
-    <Head title="Buat Undangan Baru" />
+    <Head title="Edit Undangan" />
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-bold text-xl text-slate-800 leading-tight">
-                ✉️ Buat Undangan Baru
+            <h2
+                class="font-bold text-xl text-slate-800 leading-tight capitalize"
+            >
+                ✉️ Edit Undangan {{ props.invitation.nickname_pria }} -
+                {{ props.invitation.nickname_wanita }}
             </h2>
             <p class="text-xs text-slate-400 mt-1">
                 Kelola dan isi detail undangan digital Anda langkah demi
@@ -330,7 +334,7 @@ const submit = () => {
                 </div>
             </div>
 
-            <form @submit.prevent="submit">
+            <form @submit.prevent="submitUpdate">
                 <div
                     v-show="activeTab === 1"
                     class="bg-white/70 backdrop-blur-md border border-slate-200/60 p-6 sm:p-8 rounded-2xl shadow-sm space-y-6 animate-fade-in"
@@ -598,7 +602,7 @@ const submit = () => {
                             :disabled="form.processing"
                             class="px-8 shadow-lg shadow-emerald-500/20"
                         >
-                            🚀 Simpan & Terbitkan Undangan
+                            💾 Simpan Perubahan Undangan
                         </PrimaryButton>
                     </div>
                 </div>

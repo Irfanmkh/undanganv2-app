@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //
-            $table->foreignId("paket_id")->constrained()->cascadeOnDelete()->after("whatsapp")->nullable();
+            $table->foreignId('paket_id')->after('whatsapp')->constrained('pakets')->restrictOnDelete();
         });
     }
 
